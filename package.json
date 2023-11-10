@@ -1,0 +1,19 @@
+{
+  "name": "types2graphql",
+  "version": "0.1.0",
+  "description": "A GraphQL Schema Generator (Generates from typescript interfaces)",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Double-DOS",
+  "license": "ISC",
+  "dependencies": {
+    "@types/graphql": "^14.5.0",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "typescript": "^5.2.2"
+  }
+}
