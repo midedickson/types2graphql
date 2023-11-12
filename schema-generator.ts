@@ -5,14 +5,16 @@ import {
   scanInterfaceProperties,
 } from "./interface-scanner";
 import { typing } from "./typing-enum";
+import { getText } from "./text-printer";
 
 export function convertInterfaceToGraphQLSchema(
-  validSchemaInterface: IValidSchemaInterface
+  validSchemaInterface: IValidSchemaInterface,
+  sourceFile: ts.SourceFile
 ): string {
-  return handleGrahQlConversion(validSchemaInterface);
+  return handleGrahQLConversion(validSchemaInterface, sourceFile);
 }
 
-export function generateQraphQLSchemaName(
+export function generateGraphQLSchemaName(
   interfaceName: string,
   type: typing.TYPE | typing.INPUT
 ): string {
@@ -20,10 +22,11 @@ export function generateQraphQLSchemaName(
   return `${interfaceName}${type === typing.TYPE ? "Type" : "Input"}`;
 }
 
-function handleGrahQlConversion(
-  validSchemaInterface: IValidSchemaInterface
+function handleGrahQLConversion(
+  validSchemaInterface: IValidSchemaInterface,
+  sourceFile: ts.SourceFile
 ): string {
-  const graphQLSchemaName = generateQraphQLSchemaName(
+  const graphQLSchemaName = generateGraphQLSchemaName(
     validSchemaInterface.interfaceName,
     validSchemaInterface.intendedSchemaTyping
   );
@@ -33,21 +36,30 @@ function handleGrahQlConversion(
   const properties = scanInterfaceProperties(
     validSchemaInterface.interfaceDeclaration
   );
-  const graphQLSchemaBody = generateQraphQLSchemaBody(properties);
-  return `${graphQLSchemaDeclaration} ${graphQLSchemaBody}`;
+  const graphQLSchemaBody = generateGraphQLSchemaBody(properties, sourceFile);
+  return `${graphQLSchemaDeclaration} {\n${graphQLSchemaBody}\n}`;
 }
 
-function generateQraphQLSchemaBody(properties: ts.PropertySignature[]) {
+function generateGraphQLSchemaBody(
+  properties: ts.PropertySignature[],
+  sourceFile: ts.SourceFile
+) {
   var validGraphQLPairs: string[] = [];
   properties.forEach((property) => {
     // check that property type is not undefined
     if (property.type) {
-      const conversionResult = convertNodeTypeGraphQLType(property.type);
+      const optional = property.questionToken;
+      const conversionResult = convertNodeTypeGraphQLType(
+        property.type,
+        sourceFile
+      );
       // check that we can convert the required TypeNode
       conversionResult &&
-        validGraphQLPairs.push(`
-        ${property.name.getText()}: ${convertNodeTypeGraphQLType(property.type)}
-        `);
+        validGraphQLPairs.push(
+          `  ${getText(property.name, sourceFile)}: ${conversionResult}${
+            optional ? "" : "!"
+          }`
+        );
     }
   });
 

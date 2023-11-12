@@ -4,7 +4,8 @@
 
 import ts from "typescript";
 import { checkTypeNodeInSelectedSchemaInterfaces } from "./valid-interface-selector";
-import { generateQraphQLSchemaName } from "./schema-generator";
+import { generateGraphQLSchemaName } from "./schema-generator";
+import { getText } from "./text-printer";
 
 interface TypeMapping {
   [key: string]: string;
@@ -22,12 +23,12 @@ export function detectNumberType(value: number): "Float" | "Int" {
 
 export function compareTypeReferencedNodeWithInterface(
   typeReferencedNode: ts.TypeNode,
-  targetInterface: ts.InterfaceDeclaration
+  targetInterface: ts.InterfaceDeclaration,
+  sourceFile: ts.SourceFile
 ): boolean {
   return (
-    ts.isTypeReferenceNode(typeReferencedNode) &&
-    ts.isIdentifier(typeReferencedNode.typeName) &&
-    typeReferencedNode.typeName.getText() === targetInterface.name.getText()
+    getText(typeReferencedNode, sourceFile) ===
+    getText(targetInterface.name, sourceFile)
   );
 }
 export function scanInterfaceProperties(node: ts.InterfaceDeclaration) {
@@ -35,33 +36,42 @@ export function scanInterfaceProperties(node: ts.InterfaceDeclaration) {
   return properties;
 }
 
-function isBooleanType(typeNode: ts.TypeNode): boolean {
+function isBooleanType(
+  typeNode: ts.TypeNode,
+  sourceFile: ts.SourceFile
+): boolean {
   return (
     typeNode.kind === ts.SyntaxKind.BooleanKeyword ||
     (typeNode.kind === ts.SyntaxKind.TypeReference &&
-      typeNode.getText() === "boolean")
+      getText(typeNode, sourceFile) === "boolean")
   );
 }
 
-function isNumberType(typeNode: ts.TypeNode): boolean {
+function isNumberType(
+  typeNode: ts.TypeNode,
+  sourceFile: ts.SourceFile
+): boolean {
   return (
     typeNode.kind === ts.SyntaxKind.NumberKeyword ||
     typeNode.kind === ts.SyntaxKind.BigIntKeyword ||
     (typeNode.kind === ts.SyntaxKind.TypeReference &&
-      typeNode.getText() === "number")
+      getText(typeNode, sourceFile) === "number")
   );
 }
 
-function isStringType(typeNode: ts.TypeNode): boolean {
+function isStringType(
+  typeNode: ts.TypeNode,
+  sourceFile: ts.SourceFile
+): boolean {
   return (
     typeNode.kind === ts.SyntaxKind.StringKeyword ||
     (typeNode.kind === ts.SyntaxKind.TypeReference &&
-      typeNode.getText() === "string")
+      getText(typeNode, sourceFile) === "string")
   );
 }
 
 function isInterfaceType(typeNode: ts.TypeNode): boolean {
-  return typeNode.kind === ts.SyntaxKind.InterfaceDeclaration;
+  return typeNode.kind === ts.SyntaxKind.InterfaceKeyword;
 }
 
 function getPropertyType(node: ts.PropertySignature) {
@@ -69,26 +79,29 @@ function getPropertyType(node: ts.PropertySignature) {
 }
 
 export function convertNodeTypeGraphQLType(
-  typeNode: ts.TypeNode
+  typeNode: ts.TypeNode,
+  sourceFile: ts.SourceFile
 ): string | undefined {
   if (
-    isNumberType(typeNode) ||
-    isBooleanType(typeNode) ||
-    isStringType(typeNode)
+    isNumberType(typeNode, sourceFile) ||
+    isBooleanType(typeNode, sourceFile) ||
+    isStringType(typeNode, sourceFile)
   ) {
-    return typeMapping[typeNode.getText()];
+    return typeMapping[getText(typeNode, sourceFile)];
   }
-  if (isInterfaceType(typeNode)) {
-    const typeNodeSchemaInterface =
-      checkTypeNodeInSelectedSchemaInterfaces(typeNode);
+  // todo: handle array type
+  // todo: handle union type
 
-    return (
-      typeNodeSchemaInterface &&
-      generateQraphQLSchemaName(
-        typeNodeSchemaInterface.interfaceName,
-        typeNodeSchemaInterface.intendedSchemaTyping
-      )
-    );
-  }
-  return undefined;
+  const typeNodeSchemaInterface = checkTypeNodeInSelectedSchemaInterfaces(
+    typeNode,
+    sourceFile
+  );
+
+  return (
+    typeNodeSchemaInterface &&
+    generateGraphQLSchemaName(
+      typeNodeSchemaInterface.interfaceName,
+      typeNodeSchemaInterface.intendedSchemaTyping
+    )
+  );
 }

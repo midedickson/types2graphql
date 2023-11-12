@@ -11,15 +11,25 @@ var validSchemaInterfaces: IValidSchemaInterface[] = [];
 // (string, number, boolean), we want to check if that Node has an interface
 // that exists in the previously selected valid schema interfaces
 export function checkTypeNodeInSelectedSchemaInterfaces(
-  node: ts.TypeNode
+  node: ts.TypeNode,
+  sourceFile: ts.SourceFile
 ): IValidSchemaInterface | undefined {
   return validSchemaInterfaces.find((v) =>
-    compareTypeReferencedNodeWithInterface(node, v.interfaceDeclaration)
+    compareTypeReferencedNodeWithInterface(
+      node,
+      v.interfaceDeclaration,
+      sourceFile
+    )
   );
 }
 
 export function getValidSchemaInterfaces(): IValidSchemaInterface[] {
   return validSchemaInterfaces;
+}
+
+export function clearSelectedSchemaInterfaces(): void {
+  // Set the length of the validSchemaInterfaces to 0
+  validSchemaInterfaces.length = 0;
 }
 
 export function selectValidSchemaInterfaces(

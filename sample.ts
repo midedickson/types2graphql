@@ -1,25 +1,4 @@
-import { generateGraphQLSchema } from "./old-approach";
+import path from "path";
+import { generateGraphQLSchema } from "./types2graphql";
 
-console.log(
-  generateGraphQLSchema(`
-    interface Node {
-      __kind: typing.TYPE;
-      id: string;
-    }
-
-    interface Edge {
-      __kind: typing.TYPE;
-      cursor: string;
-    }
-
-    type PageInfo {
-      __kind: typing.TYPE;
-      hasNextPage: boolean;
-      endCursor: string;
-    }
-    
-    type Query {
-      pageInfo: PageInfo
-    }
-  `)
-);
+generateGraphQLSchema(path.join(__dirname, "interfaces"), "sample");

@@ -1,2 +1,2 @@
 export { typing } from "./typing-enum";
-export { generateGraphQLSchema } from "./old-approach";
+export { generateGraphQLSchema } from "./types2graphql";
