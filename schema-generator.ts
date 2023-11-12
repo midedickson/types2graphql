@@ -8,10 +8,9 @@ import { typing } from "./typing-enum";
 import { getText } from "./text-printer";
 
 export function convertInterfaceToGraphQLSchema(
-  validSchemaInterface: IValidSchemaInterface,
-  sourceFile: ts.SourceFile
+  validSchemaInterface: IValidSchemaInterface
 ): string {
-  return handleGrahQLConversion(validSchemaInterface, sourceFile);
+  return handleGrahQLConversion(validSchemaInterface);
 }
 
 export function generateGraphQLSchemaName(
@@ -23,8 +22,7 @@ export function generateGraphQLSchemaName(
 }
 
 function handleGrahQLConversion(
-  validSchemaInterface: IValidSchemaInterface,
-  sourceFile: ts.SourceFile
+  validSchemaInterface: IValidSchemaInterface
 ): string {
   const graphQLSchemaName = generateGraphQLSchemaName(
     validSchemaInterface.interfaceName,
@@ -36,7 +34,10 @@ function handleGrahQLConversion(
   const properties = scanInterfaceProperties(
     validSchemaInterface.interfaceDeclaration
   );
-  const graphQLSchemaBody = generateGraphQLSchemaBody(properties, sourceFile);
+  const graphQLSchemaBody = generateGraphQLSchemaBody(
+    properties,
+    validSchemaInterface.sourceFile
+  );
   return `${graphQLSchemaDeclaration} {\n${graphQLSchemaBody}\n}`;
 }
 

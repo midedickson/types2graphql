@@ -8,4 +8,5 @@ export interface IValidSchemaInterface {
   intendedSchemaTyping: typing.TYPE | typing.INPUT;
   interfaceDeclarationText: string;
   interfaceDeclaration: ts.InterfaceDeclaration;
+  sourceFile: ts.SourceFile;
 }

@@ -7,7 +7,7 @@ import { compareTypeReferencedNodeWithInterface } from "./interface-scanner";
 
 var validSchemaInterfaces: IValidSchemaInterface[] = [];
 
-// when we encounter a TypeNode that is not the basec data types:
+// When we encounter a TypeNode that is not the basic data types:
 // (string, number, boolean), we want to check if that Node has an interface
 // that exists in the previously selected valid schema interfaces
 export function checkTypeNodeInSelectedSchemaInterfaces(
@@ -37,12 +37,23 @@ export function selectValidSchemaInterfaces(
   sourceFile: ts.SourceFile
 ) {
   for (var i = 0; i < interfaceDeclarations.length; i++) {
-    const validInterfaceCheck = convertInterfaceDeclarationToInterfaceSchema(
-      interfaceDeclarations[i],
-      sourceFile
+    const interfaceExists = checkInterfaceExistsInSelectedSchemas(
+      interfaceDeclarations[i]
     );
-    validInterfaceCheck && validSchemaInterfaces.push(validInterfaceCheck);
+    if (!interfaceExists) {
+      const validInterfaceCheck = convertInterfaceDeclarationToInterfaceSchema(
+        interfaceDeclarations[i],
+        sourceFile
+      );
+      validInterfaceCheck && validSchemaInterfaces.push(validInterfaceCheck);
+    }
   }
+}
+
+export function checkInterfaceExistsInSelectedSchemas(
+  node: ts.InterfaceDeclaration
+): IValidSchemaInterface | undefined {
+  return validSchemaInterfaces.find((v) => v.interfaceDeclaration == node);
 }
 
 function convertInterfaceDeclarationToInterfaceSchema(
@@ -65,6 +76,7 @@ function convertInterfaceDeclarationToInterfaceSchema(
     intendedSchemaTyping,
     interfaceDeclarationText,
     interfaceDeclaration,
+    sourceFile,
   };
 }
 

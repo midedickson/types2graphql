@@ -57,13 +57,10 @@ function getValidSchemaInterfacesPerSourceFile(sourceFile: ts.SourceFile) {
   selectValidSchemaInterfaces(interfacesInSourceFile, sourceFile);
 }
 
-function getGraphQLFromSchemaInterfaces(sourceFile: ts.SourceFile) {
+function getGraphQLFromValidSchemaInterfaces() {
   const validSchemaInterfaces = getValidSchemaInterfaces();
   validSchemaInterfaces.forEach((schemaInterface) => {
-    const graphQLSchema = convertInterfaceToGraphQLSchema(
-      schemaInterface,
-      sourceFile
-    );
+    const graphQLSchema = convertInterfaceToGraphQLSchema(schemaInterface);
     graphQLSchemasInFolder.push(graphQLSchema);
   });
 }
@@ -91,8 +88,8 @@ export function generateGraphQLSchema(
     const sourceCode = parseFileToSourceCode(filePath);
     const sourceFile = generateSourceFileFromSourceCode(sourceCode);
     getValidSchemaInterfacesPerSourceFile(sourceFile);
-    getGraphQLFromSchemaInterfaces(sourceFile);
-    createGraphQLFile(appName, interfaceFolderPath);
-    clearSelectedSchemaInterfaces();
   });
+  getGraphQLFromValidSchemaInterfaces();
+  createGraphQLFile(appName, interfaceFolderPath);
+  clearSelectedSchemaInterfaces();
 }

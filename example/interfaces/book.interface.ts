@@ -1,10 +1,22 @@
 import { typing } from "../../typing-enum";
 import { Author } from "./author.interface";
 
-interface Book {
+// import { typing } from "types2graphql";
+
+export interface Book {
   __kind: typing.TYPE;
-  title: string;
+  id: string;
+  name: string;
+  rating: number;
   author: Author;
-  pages: number;
-  read: boolean;
+}
+
+interface Filter {
+  __kind: typing.INPUT;
+  rating?: number;
+}
+
+interface Response {
+  __kind: typing.TYPE;
+  books: Book[];
 }
