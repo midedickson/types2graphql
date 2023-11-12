@@ -1,4 +1,4 @@
-import { typing } from "../typing-enum";
+import { typing } from "../../typing-enum";
 import { Author } from "./author.interface";
 
 interface Book {

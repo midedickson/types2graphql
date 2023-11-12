@@ -13,19 +13,8 @@ import {
 import { convertInterfaceToGraphQLSchema } from "./schema-generator";
 var graphQLSchemasInFolder: string[] = [];
 
-function findAllSchemaInterfacesInSourceFile(
-  sourceFile: ts.SourceFile
-): ts.InterfaceDeclaration[] {
-  // Ensure to filter only interface declarations
-  const interfaceDeclarations = sourceFile.statements.filter(
-    ts.isInterfaceDeclaration
-  );
-
-  // Print the generated Abstract Interface Declaration
-  return interfaceDeclarations;
-}
-
 function generateSourceFileFromSourceCode(sourceCode: string): ts.SourceFile {
+  2;
   const sourceFile = ts.createSourceFile(
     "temp.ts",
     sourceCode,

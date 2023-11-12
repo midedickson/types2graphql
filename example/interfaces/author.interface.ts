@@ -1,4 +1,4 @@
-import { typing } from "../typing-enum";
+import { typing } from "../../typing-enum";
 
 export interface Author {
   __kind: typing.TYPE;
