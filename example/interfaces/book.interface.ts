@@ -8,7 +8,7 @@ export interface Book {
   id: string;
   name: string;
   rating: number;
-  author: Author;
+  authors: Author[];
 }
 
 interface Filter {

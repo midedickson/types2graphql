@@ -3,7 +3,7 @@ import ts from "typescript";
 import { IValidSchemaInterface } from "./IValidSchemaInterface";
 import { typing } from "./typing-enum";
 import { getText } from "./text-printer";
-import { compareTypeReferencedNodeWithInterface } from "./interface-scanner";
+import { compareTypeReferencedNameWithInterface } from "./interface-scanner";
 
 var validSchemaInterfaces: IValidSchemaInterface[] = [];
 
@@ -15,11 +15,20 @@ export function checkTypeNodeInSelectedSchemaInterfaces(
   sourceFile: ts.SourceFile
 ): IValidSchemaInterface | undefined {
   return validSchemaInterfaces.find((v) =>
-    compareTypeReferencedNodeWithInterface(
-      node,
-      v.interfaceDeclaration,
-      sourceFile
+    compareTypeReferencedNameWithInterface(
+      getText(node, sourceFile),
+      v.interfaceName
     )
+  );
+}
+
+// variation of the `checkTypeNodeInSelectedSchemaInterfaces` function
+// but checking with the interface name directly instead.
+export function checkTypeNodeStringInSelectedSchemaInterfaces(
+  nodeName: string
+): IValidSchemaInterface | undefined {
+  return validSchemaInterfaces.find((v) =>
+    compareTypeReferencedNameWithInterface(nodeName, v.interfaceName)
   );
 }
 
