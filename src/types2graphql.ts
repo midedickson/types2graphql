@@ -11,28 +11,17 @@ import {
   selectValidSchemaInterfaces,
 } from "./valid-interface-selector";
 import { convertInterfaceToGraphQLSchema } from "./schema-generator";
-var graphQLSchemasInFolder: string[] = [];
+const graphQLSchemasInFolder: string[] = [];
 
-function generateSourceFileFromSourceCode(sourceCode: string): ts.SourceFile {
-  2;
-  const sourceFile = ts.createSourceFile(
-    "temp.ts",
-    sourceCode,
-    ts.ScriptTarget.Latest
-  );
+export const generateSourceFileFromSourceCode = (
+  sourceCode: string
+): ts.SourceFile =>
+  ts.createSourceFile("temp.ts", sourceCode, ts.ScriptTarget.Latest);
 
-  return sourceFile;
-}
+export const parseFileToSourceCode = (filePath: string): string =>
+  fs.readFileSync(filePath, "utf-8");
 
-function parseFileToSourceCode(filePath: string): string {
-  // Read TypeScript code from a file
-  const sourceCode = fs.readFileSync(filePath, "utf-8");
-
-  // Print the parsed source code
-  return sourceCode;
-}
-
-function readFilesInFolder(folderPath: string): string[] {
+export const readFilesInFolder = (folderPath: string): string[] => {
   try {
     // Get the list of files in the folder
     const files = fs.readdirSync(folderPath);
@@ -49,27 +38,32 @@ function readFilesInFolder(folderPath: string): string[] {
     );
     return [];
   }
-}
+};
 
-function getValidSchemaInterfacesPerSourceFile(sourceFile: ts.SourceFile) {
+const getValidSchemaInterfacesPerSourceFile = (
+  sourceFile: ts.SourceFile
+): void => {
   const interfacesInSourceFile =
     findAllInterfaceDeclarationsFromSourceFile(sourceFile);
   selectValidSchemaInterfaces(interfacesInSourceFile, sourceFile);
-}
+};
 
-function getGraphQLFromValidSchemaInterfaces() {
+const getGraphQLFromValidSchemaInterfaces = (): void => {
   const validSchemaInterfaces = getValidSchemaInterfaces();
   validSchemaInterfaces.forEach((schemaInterface) => {
     const graphQLSchema = convertInterfaceToGraphQLSchema(schemaInterface);
     graphQLSchemasInFolder.push(graphQLSchema);
   });
-}
+};
 
-function writeToFile(filePath: string, content: string): void {
+const writeToFile = (filePath: string, content: string): void => {
   fs.writeFileSync(filePath, content, "utf-8");
-}
+};
 
-function createGraphQLFile(appName: string, interfaceFolderPath: string) {
+export const createGraphQLFile = (
+  appName: string,
+  interfaceFolderPath: string
+): void => {
   // todo: use appName to generate the graph file in the folderPath specified
   const graphQLFileName = `${appName}.graphql`;
   const graphQLFilePath = path.join(interfaceFolderPath, graphQLFileName);
@@ -77,12 +71,12 @@ function createGraphQLFile(appName: string, interfaceFolderPath: string) {
     "\n\n"
   )}\n`;
   writeToFile(graphQLFilePath, graphQLFileContent);
-}
+};
 
-export function generateGraphQLSchema(
+export const generateGraphQLSchema = (
   interfaceFolderPath: string,
   appName: string
-) {
+): void => {
   const filePaths = readFilesInFolder(interfaceFolderPath);
   filePaths.forEach((filePath) => {
     const sourceCode = parseFileToSourceCode(filePath);
@@ -92,4 +86,4 @@ export function generateGraphQLSchema(
   getGraphQLFromValidSchemaInterfaces();
   createGraphQLFile(appName, interfaceFolderPath);
   clearSelectedSchemaInterfaces();
-}
+};

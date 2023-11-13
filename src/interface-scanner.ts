@@ -21,78 +21,51 @@ export const typeMapping: TypeMapping = {
   number: "Int",
 };
 
-export function detectNumberType(value: number): "Float" | "Int" {
-  return Number.isInteger(value) ? "Int" : "Float";
-}
-
-export function compareTypeReferencedNameWithInterface(
+export const compareTypeReferencedNameWithInterface = (
   typeReferencedName: string,
   targetInterfaceName: string
-): boolean {
-  return targetInterfaceName === typeReferencedName;
-}
-export function scanInterfaceProperties(node: ts.InterfaceDeclaration) {
-  const properties = node.members.filter(ts.isPropertySignature);
-  return properties;
-}
+): boolean => targetInterfaceName === typeReferencedName;
 
-function isBooleanType(
+export const scanInterfaceProperties = (node: ts.InterfaceDeclaration) =>
+  node.members.filter(ts.isPropertySignature);
+
+const isBooleanType = (
   typeNode: ts.TypeNode,
   sourceFile: ts.SourceFile
-): boolean {
-  return (
-    typeNode.kind === ts.SyntaxKind.BooleanKeyword ||
-    (typeNode.kind === ts.SyntaxKind.TypeReference &&
-      getText(typeNode, sourceFile) === "boolean")
-  );
-}
+): boolean =>
+  typeNode.kind === ts.SyntaxKind.BooleanKeyword ||
+  (typeNode.kind === ts.SyntaxKind.TypeReference &&
+    getText(typeNode, sourceFile) === "boolean");
 
-function isNumberType(
+const isNumberType = (
   typeNode: ts.TypeNode,
   sourceFile: ts.SourceFile
-): boolean {
-  return (
-    typeNode.kind === ts.SyntaxKind.NumberKeyword ||
-    typeNode.kind === ts.SyntaxKind.BigIntKeyword ||
-    (typeNode.kind === ts.SyntaxKind.TypeReference &&
-      getText(typeNode, sourceFile) === "number")
-  );
-}
+): boolean =>
+  typeNode.kind === ts.SyntaxKind.NumberKeyword ||
+  typeNode.kind === ts.SyntaxKind.BigIntKeyword ||
+  (typeNode.kind === ts.SyntaxKind.TypeReference &&
+    getText(typeNode, sourceFile) === "number");
 
-function isStringType(
+const isStringType = (
   typeNode: ts.TypeNode,
   sourceFile: ts.SourceFile
-): boolean {
-  return (
-    typeNode.kind === ts.SyntaxKind.StringKeyword ||
-    (typeNode.kind === ts.SyntaxKind.TypeReference &&
-      getText(typeNode, sourceFile) === "string")
-  );
-}
+): boolean =>
+  typeNode.kind === ts.SyntaxKind.StringKeyword ||
+  (typeNode.kind === ts.SyntaxKind.TypeReference &&
+    getText(typeNode, sourceFile) === "string");
 
-function isInterfaceType(typeNode: ts.TypeNode): boolean {
-  return typeNode.kind === ts.SyntaxKind.InterfaceKeyword;
-}
-
-function isArrayType(
+const isArrayType = (
   typeNode: ts.TypeNode,
   sourceFile: ts.SourceFile
-): boolean {
-  return (
-    typeNode.kind === ts.SyntaxKind.ArrayType ||
-    (typeNode.kind === ts.SyntaxKind.TypeReference &&
-      getText(typeNode, sourceFile).includes("[]"))
-  );
-}
+): boolean =>
+  typeNode.kind === ts.SyntaxKind.ArrayType ||
+  (typeNode.kind === ts.SyntaxKind.TypeReference &&
+    getText(typeNode, sourceFile).includes("[]"));
 
-function getPropertyType(node: ts.PropertySignature) {
-  return node.type!;
-}
-
-export function convertNodeTypeGraphQLType(
+export const convertNodeTypeGraphQLType = (
   typeNode: ts.TypeNode,
   sourceFile: ts.SourceFile
-): string | undefined {
+): string | undefined => {
   if (
     isNumberType(typeNode, sourceFile) ||
     isBooleanType(typeNode, sourceFile) ||
@@ -102,12 +75,10 @@ export function convertNodeTypeGraphQLType(
   }
   // handle array type
   if (isArrayType(typeNode, sourceFile)) {
-    // todo: run algo to return correct array type
     const arrayDescription = describeArray(typeNode, sourceFile);
     if (arrayDescription.elementGraphQLType) {
       return getGraphQLArrayFromArrayDescription(arrayDescription);
     } else {
-      // if the base array typeNode is none of the  basic data types, we then check if it is a valid schema else return undefined
       const typeNodeSchemaInterface =
         checkTypeNodeStringInSelectedSchemaInterfaces(arrayDescription.element);
       if (typeNodeSchemaInterface) {
@@ -121,7 +92,7 @@ export function convertNodeTypeGraphQLType(
       }
     }
   }
-  // todo: handle union type
+  // handle union type
 
   // if the typeNode is none of the types above, we then check if it is a valid schema else return undefined
   const typeNodeSchemaInterface = checkTypeNodeStringInSelectedSchemaInterfaces(
@@ -135,4 +106,4 @@ export function convertNodeTypeGraphQLType(
       typeNodeSchemaInterface.intendedSchemaTyping
     )
   );
-}
+};

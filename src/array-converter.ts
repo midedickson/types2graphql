@@ -8,32 +8,29 @@ interface ArrayDescription {
   nested: number;
 }
 
-export function describeArray(
+export const describeArray = (
   node: ts.TypeNode,
   sourceFile: ts.SourceFile
-): ArrayDescription {
-  var nodetext = getText(node, sourceFile);
+): ArrayDescription => {
+  let nodetext = getText(node, sourceFile);
   let arrayPopCount = 0;
   while (nodetext.includes("[]")) {
     nodetext = nodetext.slice(0, nodetext.length - 2);
     arrayPopCount++;
   }
-  const arrayDescription = {
+  return {
     element: nodetext,
     elementGraphQLType: typeMapping[nodetext],
     nested: arrayPopCount,
   };
+};
 
-  return arrayDescription;
-}
-
-export function getGraphQLArrayFromArrayDescription(
+export const getGraphQLArrayFromArrayDescription = (
   arrayDescription: ArrayDescription
-): string | undefined {
-  var baseTypeName = arrayDescription.elementGraphQLType;
+): string | undefined => {
+  let baseTypeName = arrayDescription.elementGraphQLType;
   for (let i = 0; i < arrayDescription.nested; i++) {
     baseTypeName = `[${baseTypeName}]`;
   }
-
   return baseTypeName;
-}
+};

@@ -7,23 +7,18 @@ import {
 import { typing } from "./typing-enum";
 import { getText } from "./text-printer";
 
-export function convertInterfaceToGraphQLSchema(
+export const convertInterfaceToGraphQLSchema = (
   validSchemaInterface: IValidSchemaInterface
-): string {
-  return handleGrahQLConversion(validSchemaInterface);
-}
+): string => handleGrahQLConversion(validSchemaInterface);
 
-export function generateGraphQLSchemaName(
+export const generateGraphQLSchemaName = (
   interfaceName: string,
   type: typing.TYPE | typing.INPUT
-): string {
-  // gnenrate the schema name based on the graph typing type
-  return `${interfaceName}${type === typing.TYPE ? "Type" : "Input"}`;
-}
+): string => `${interfaceName}${type === typing.TYPE ? "Type" : "Input"}`;
 
-function handleGrahQLConversion(
+const handleGrahQLConversion = (
   validSchemaInterface: IValidSchemaInterface
-): string {
+): string => {
   const graphQLSchemaName = generateGraphQLSchemaName(
     validSchemaInterface.interfaceName,
     validSchemaInterface.intendedSchemaTyping
@@ -39,13 +34,13 @@ function handleGrahQLConversion(
     validSchemaInterface.sourceFile
   );
   return `${graphQLSchemaDeclaration} {\n${graphQLSchemaBody}\n}`;
-}
+};
 
-function generateGraphQLSchemaBody(
+const generateGraphQLSchemaBody = (
   properties: ts.PropertySignature[],
   sourceFile: ts.SourceFile
-) {
-  var validGraphQLPairs: string[] = [];
+): string => {
+  const validGraphQLPairs: string[] = [];
   properties.forEach((property) => {
     // check that property type is not undefined
     if (property.type) {
@@ -65,4 +60,4 @@ function generateGraphQLSchemaBody(
   });
 
   return validGraphQLPairs.join("\n");
-}
+};

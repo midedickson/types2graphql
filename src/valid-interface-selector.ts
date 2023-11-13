@@ -10,42 +10,41 @@ var validSchemaInterfaces: IValidSchemaInterface[] = [];
 // When we encounter a TypeNode that is not the basic data types:
 // (string, number, boolean), we want to check if that Node has an interface
 // that exists in the previously selected valid schema interfaces
-export function checkTypeNodeInSelectedSchemaInterfaces(
+export const checkTypeNodeInSelectedSchemaInterfaces = (
   node: ts.TypeNode,
   sourceFile: ts.SourceFile
-): IValidSchemaInterface | undefined {
+): IValidSchemaInterface | undefined => {
   return validSchemaInterfaces.find((v) =>
     compareTypeReferencedNameWithInterface(
       getText(node, sourceFile),
       v.interfaceName
     )
   );
-}
+};
 
 // variation of the `checkTypeNodeInSelectedSchemaInterfaces` function
 // but checking with the interface name directly instead.
-export function checkTypeNodeStringInSelectedSchemaInterfaces(
+export const checkTypeNodeStringInSelectedSchemaInterfaces = (
   nodeName: string
-): IValidSchemaInterface | undefined {
+): IValidSchemaInterface | undefined => {
   return validSchemaInterfaces.find((v) =>
     compareTypeReferencedNameWithInterface(nodeName, v.interfaceName)
   );
-}
+};
 
-export function getValidSchemaInterfaces(): IValidSchemaInterface[] {
-  return validSchemaInterfaces;
-}
+export const getValidSchemaInterfaces = (): IValidSchemaInterface[] =>
+  validSchemaInterfaces;
 
-export function clearSelectedSchemaInterfaces(): void {
+export const clearSelectedSchemaInterfaces = (): void => {
   // Set the length of the validSchemaInterfaces to 0
   validSchemaInterfaces.length = 0;
-}
+};
 
-export function selectValidSchemaInterfaces(
+export const selectValidSchemaInterfaces = (
   interfaceDeclarations: ts.InterfaceDeclaration[],
   sourceFile: ts.SourceFile
-) {
-  for (var i = 0; i < interfaceDeclarations.length; i++) {
+): void => {
+  for (let i = 0; i < interfaceDeclarations.length; i++) {
     const interfaceExists = checkInterfaceExistsInSelectedSchemas(
       interfaceDeclarations[i]
     );
@@ -57,18 +56,17 @@ export function selectValidSchemaInterfaces(
       validInterfaceCheck && validSchemaInterfaces.push(validInterfaceCheck);
     }
   }
-}
+};
 
-export function checkInterfaceExistsInSelectedSchemas(
+export const checkInterfaceExistsInSelectedSchemas = (
   node: ts.InterfaceDeclaration
-): IValidSchemaInterface | undefined {
-  return validSchemaInterfaces.find((v) => v.interfaceDeclaration == node);
-}
+): IValidSchemaInterface | undefined =>
+  validSchemaInterfaces.find((v) => v.interfaceDeclaration === node);
 
-function convertInterfaceDeclarationToInterfaceSchema(
+const convertInterfaceDeclarationToInterfaceSchema = (
   interfaceDeclaration: ts.InterfaceDeclaration,
   sourceFile: ts.SourceFile
-): IValidSchemaInterface | undefined {
+): IValidSchemaInterface | undefined => {
   // use the string representation of the interface declaration to get the intended schema information
   const interfaceDeclarationText = getText(interfaceDeclaration, sourceFile);
   const intendedSchemaTyping = getIntendedSchemaTyping(
@@ -87,24 +85,35 @@ function convertInterfaceDeclarationToInterfaceSchema(
     interfaceDeclaration,
     sourceFile,
   };
-}
+};
 
-function getIntendedSchemaTyping(
+const isTextPresent = (pattern: string, text: string) => {
+  // Create a regex pattern with case-insensitive flag and whitespace handling
+  const regexPattern = new RegExp(pattern.replace(/\s/g, "\\s*"), "i");
+
+  // Test if the pattern is found in the text
+  return regexPattern.test(text);
+};
+
+const getIntendedSchemaTyping = (
   interfaceDeclarationText: string
-): typing.TYPE | typing.INPUT | typing.NONE {
-  if (interfaceDeclarationText.includes("__kind: typing.TYPE")) {
+): typing.TYPE | typing.INPUT | typing.NONE => {
+  const typePattern = "__kind:\\s*typing.TYPE";
+  const inputPattern = "__kind:\\s*typing.INPUT";
+
+  if (isTextPresent(typePattern, interfaceDeclarationText)) {
     return typing.TYPE;
-  } else if (interfaceDeclarationText.includes("__kind: typing.INPUT")) {
+  } else if (isTextPresent(inputPattern, interfaceDeclarationText)) {
     return typing.INPUT;
   } else {
     return typing.NONE;
   }
-}
+};
 
-export function findAllInterfaceDeclarationsFromSourceFile(
+export const findAllInterfaceDeclarationsFromSourceFile = (
   sourceFile: ts.SourceFile
-): ts.InterfaceDeclaration[] {
-  var interfaceDeclarations: ts.InterfaceDeclaration[] = [];
+): ts.InterfaceDeclaration[] => {
+  const interfaceDeclarations: ts.InterfaceDeclaration[] = [];
   const interfaces = sourceFile.statements.filter(ts.isInterfaceDeclaration);
   interfaces.forEach((node: ts.InterfaceDeclaration) => {
     if (!node.heritageClauses) {
@@ -112,4 +121,4 @@ export function findAllInterfaceDeclarationsFromSourceFile(
     }
   });
   return interfaceDeclarations;
-}
+};
