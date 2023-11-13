@@ -1,6 +1,6 @@
 {
   "name": "types2graphql",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A GraphQL Schema Generator (Generates from typescript interfaces)",
   "main": "index.ts",
   "files": [
