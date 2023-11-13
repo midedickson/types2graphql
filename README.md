@@ -52,7 +52,7 @@ interface Response {
 ```ts
 // Provide the path to the folder containing the interfaces and a name for your graphQL app
 
-generateGraphQLSchema(path.join(__dirname, "interfaces"), "sample");
+generateGraphQLSchema(path.join(process.cwd(), "interfaces"), "sample");
 ```
 
 - This creates a file `sample.graphql` file where all the schemas found in the `interfaces` folder.
@@ -107,6 +107,10 @@ server.listen().then(({ url }) => {
 
 [Link to Video Presentation](http://your-vimeo-link)
 
+## Demo Project
+
+[Link to Demo Project](https://github.com/Double-DOS/types2graphql-demo)
+
 ## License
 
-This library is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This library is licensed under the MIT License - see the [LICENSE](LICENSE.txt) file for details.
