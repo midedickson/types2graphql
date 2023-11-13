@@ -1,4 +1,4 @@
-import { typing } from "../../typing-enum";
+import { typing } from "../../src/typing-enum";
 import { Author } from "./author.interface";
 
 // import { typing } from "types2graphql";
