@@ -2,8 +2,8 @@
   "name": "types2graphql",
   "version": "0.1.8",
   "description": "A GraphQL Schema Generator (Generates from typescript interfaces)",
-  "main": "dist/index.js",
-  "types": "index.d.ts",
+  "main": "dist/src/types2graphql.js",
+  "types": "dist/src/types2graphql.d.ts",
   "files": [
     "/dist/**/*"
   ],

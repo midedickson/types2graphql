@@ -2,8 +2,7 @@
 import ts from "typescript";
 import * as fs from "fs";
 import * as path from "path";
-import { IValidSchemaInterface } from "./IValidSchemaInterface";
-import { typing } from "./typing-enum";
+export { typing } from "./typing-enum";
 import {
   clearSelectedSchemaInterfaces,
   findAllInterfaceDeclarationsFromSourceFile,
@@ -13,15 +12,13 @@ import {
 import { convertInterfaceToGraphQLSchema } from "./schema-generator";
 const graphQLSchemasInFolder: string[] = [];
 
-export const generateSourceFileFromSourceCode = (
-  sourceCode: string
-): ts.SourceFile =>
+const generateSourceFileFromSourceCode = (sourceCode: string): ts.SourceFile =>
   ts.createSourceFile("temp.ts", sourceCode, ts.ScriptTarget.Latest);
 
-export const parseFileToSourceCode = (filePath: string): string =>
+const parseFileToSourceCode = (filePath: string): string =>
   fs.readFileSync(filePath, "utf-8");
 
-export const readFilesInFolder = (folderPath: string): string[] => {
+const readFilesInFolder = (folderPath: string): string[] => {
   try {
     // Get the list of files in the folder
     const files = fs.readdirSync(folderPath);
@@ -60,7 +57,7 @@ const writeToFile = (filePath: string, content: string): void => {
   fs.writeFileSync(filePath, content, "utf-8");
 };
 
-export const createGraphQLFile = (
+const createGraphQLFile = (
   appName: string,
   interfaceFolderPath: string
 ): void => {
