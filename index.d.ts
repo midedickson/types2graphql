@@ -1,6 +1,6 @@
 import { typing } from "./src/typing-enum";
 
-declare module types2graphqql {
+declare module types2graphql {
   function generateGraphQLSchema(
     interfaceFoderPath: string,
     appName: string
