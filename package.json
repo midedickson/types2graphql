@@ -3,7 +3,7 @@
   "version": "0.1.6",
   "description": "A GraphQL Schema Generator (Generates from typescript interfaces)",
   "main": "dist/index.js",
-  "types": "types2graphql.d.ts",
+  "types": "index.d.ts",
   "files": [
     "/dist/**/*"
   ],
