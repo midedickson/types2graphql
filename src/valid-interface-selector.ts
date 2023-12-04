@@ -98,8 +98,8 @@ const isTextPresent = (pattern: string, text: string) => {
 const getIntendedSchemaTyping = (
   interfaceDeclarationText: string
 ): typing.TYPE | typing.INPUT | typing.NONE => {
-  const typePattern = "__kind:\\s*typing.TYPE";
-  const inputPattern = "__kind:\\s*typing.INPUT";
+  const typePattern = "__kind\\??:\\s*typing.TYPE";
+  const inputPattern = "__kind\\??:\\s*typing.INPUT";
 
   if (isTextPresent(typePattern, interfaceDeclarationText)) {
     return typing.TYPE;

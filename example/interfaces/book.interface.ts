@@ -12,11 +12,11 @@ export interface Book {
 }
 
 interface Filter {
-  __kind: typing.INPUT;
+  __kind?: typing.INPUT;
   rating?: number;
 }
 
 interface Response {
-  __kind: typing.TYPE;
+  __kind?: typing.TYPE;
   books: Book[];
 }
